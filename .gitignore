@@ -1,0 +1,4 @@
+*.dll
+BackTestStock/obj/
+BackTestStock/bin/
+BackTestStock/BackTestStock.v12.suo
