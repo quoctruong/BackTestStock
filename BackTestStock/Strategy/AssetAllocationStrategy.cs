@@ -4,14 +4,20 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using BackTestStock.StockData;
+using System.ComponentModel.Composition;
 
 namespace BackTestStock.Strategy
 {
-    public class AssetAllocationStrategy : GenericStrategy
+    [Export(typeof(IStrategy))]
+    public class AssetAllocationStrategy : IStrategy
     {
-        public double InitialCash = 10000;
-
-        public double MonthlyIncrease = 2000;
+        public string Name
+        {
+            get
+            {
+                return "AssetAllocationStrategy";
+            }
+        }
 
         /// <summary>
         /// Just buy stock that ranks first
@@ -20,14 +26,11 @@ namespace BackTestStock.Strategy
         /// <param name="rankings"></param>
         public void SetUpPortFolio(Portfolio.Portfolio portfolio, Ranking[] rankings)
         {
-            // give ourselves 10k
-            portfolio.Cash = InitialCash;
-
             // top ranked
             Ranking topRanked = rankings.First();
 
             // buy the stock that rank first
-            portfolio.BuyStock(topRanked.Stock, portfolio.Cash / topRanked.Stock.AdjustedClose);
+            portfolio.BuyStock(topRanked.Stock, portfolio.Cash);
         }
 
         public void UpdatePortfolio(Portfolio.Portfolio portfolio, Ranking[] previousRankings, Ranking[] currentRankings)
@@ -37,12 +40,12 @@ namespace BackTestStock.Strategy
             Ranking currentTop = currentRankings.First();
 
             // let's give ourselves some money
-            portfolio.Cash += MonthlyIncrease;
+            portfolio.Cash += portfolio.MonthlyIncrease;
 
             if (String.Equals(previousTop.Stock.Ticker, currentTop.Stock.Ticker, StringComparison.OrdinalIgnoreCase))
             {
                 // same stock so just buy
-                portfolio.BuyStock(currentTop.Stock, MonthlyIncrease / currentTop.Stock.AdjustedClose);
+                portfolio.BuyStock(currentTop.Stock, portfolio.MonthlyIncrease);
             }
             else
             {
@@ -56,11 +59,11 @@ namespace BackTestStock.Strategy
                 portfolio.SellStock(previousTopRightNow, portfolio.GetStockShares(previousTopRightNow));
 
                 // time to buy all
-                portfolio.BuyStock(currentTop.Stock, portfolio.TotalValue / currentTop.Stock.AdjustedClose);
+                portfolio.BuyStock(currentTop.Stock, portfolio.TotalValue);
             }
         }
 
-        public override Portfolio.Portfolio BackTest(Indicator.GenericIndicator indicator, HistoricalDataSet dataSet, Portfolio.Portfolio portfolio)
+        public Portfolio.Portfolio BackTest(Indicator.GenericIndicator indicator, HistoricalDataSet dataSet, Portfolio.Portfolio portfolio)
         {
             Ranking[][] rankingTable = dataSet.GetRankingTable(indicator);
 

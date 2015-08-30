@@ -4,16 +4,18 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using BackTestStock.StockData;
+using System.ComponentModel.Composition;
 
 namespace BackTestStock.Indicator
 {
     /// <summary>
     /// Returns the performance of the stock over a period of n where n is Parameter
     /// </summary>
+    [Export(typeof(IIndicator))]
     public class HistoricalPerformanceIndicator : GenericIndicator
     {
-        public HistoricalPerformanceIndicator(IEnumerable<int> parameters)
-            : base("HistoricalPerformance", parameters) { }
+        public HistoricalPerformanceIndicator()
+            : base("HistoricalPerformance") { }
 
         public override List<Ranking> GenerateRanking(List<Stock> stockData)
         {

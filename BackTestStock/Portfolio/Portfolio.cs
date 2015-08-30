@@ -24,6 +24,8 @@ namespace BackTestStock.Portfolio
 
         public double YearlyIncome { get; set; }
 
+        public double MonthlyIncrease { get; set; }
+
         /// <summary>
         /// Take note of capital loss so far so we can use to offset gain
         /// </summary>
@@ -76,15 +78,6 @@ namespace BackTestStock.Portfolio
                     positionList.Sum(position => position.TotalValue))
                     + Cash;
             }
-        }
-
-        /// <summary>
-        /// Starts a fresh portfolio!
-        /// </summary>
-        /// <param name="value"></param>
-        public Portfolio(double value)
-        {
-            Cash = value;
         }
 
         public double GetStockShares(Stock stock)
@@ -159,7 +152,7 @@ namespace BackTestStock.Portfolio
             }
 
             // update cash before we sell (greedy hehe)
-            Cash += (noOfShares * stock.AdjustedClose);
+            Cash += ((noOfShares * stock.AdjustedClose) - Commission);
 
             // for now, we will sell the earliest available one first.
             // other selling method will be added in the future
@@ -225,15 +218,17 @@ namespace BackTestStock.Portfolio
         /// </summary>
         /// <param name="stock"></param>
         /// <param name="ticker"></param>
-        public void BuyStock(Stock stock, double noOfShares)
+        public void BuyStock(Stock stock, double money)
         {
-            double moneyNeeded = stock.AdjustedClose * noOfShares;
-            if (moneyNeeded > Cash && (Math.Abs(moneyNeeded - Cash) > 0.0005))
+            if (money > Cash && (Math.Abs(money - Cash) > 0.0005))
             {
                 throw new InvalidOperationException("Not enough cash!");
             }
 
-            Cash = Cash - moneyNeeded;
+            // let's sese how many shares we can buy
+            double noOfShares = (money - Commission) / stock.AdjustedClose;
+
+            Cash = Cash - money;
 
             // Open a list of position if not already there
             if (!OpenPositions.ContainsKey(stock.Ticker))

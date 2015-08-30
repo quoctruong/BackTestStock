@@ -9,8 +9,10 @@ using BackTestStock.Portfolio;
 
 namespace BackTestStock.Strategy
 {
-    public abstract class GenericStrategy
+    public interface IStrategy
     {
-        public abstract Portfolio.Portfolio BackTest(GenericIndicator indicator, HistoricalDataSet dataSet, Portfolio.Portfolio portfolio);
+        string Name { get; }
+
+        Portfolio.Portfolio BackTest(GenericIndicator indicator, HistoricalDataSet dataSet, Portfolio.Portfolio portfolio);
     }
 }

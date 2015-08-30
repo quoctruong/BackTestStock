@@ -7,7 +7,7 @@ using BackTestStock.StockData;
 
 namespace BackTestStock.Indicator
 {
-    public abstract class GenericIndicator
+    public abstract class GenericIndicator : IIndicator
     {
         /// <summary>
         /// Generate a list of ranking according to the indicator
@@ -34,20 +34,13 @@ namespace BackTestStock.Indicator
 
         public string Name
         {
-            get
-            {
-                return _Name;
-            }
-            protected set
-            {
-                _Name = value;
-            }
+            get;
+            private set;
         }
 
-        protected GenericIndicator(string name, IEnumerable<int> parameters)
+        protected GenericIndicator(string name)
         {
-            _Name = name;
-            this.Parameters = parameters;
+            Name = name;
         }
 
         /// <summary>

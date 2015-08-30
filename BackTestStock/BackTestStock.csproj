@@ -31,6 +31,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
     <Reference Include="System.Management.Automation, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -43,8 +44,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Cmdlet\NewIndicator.cs" />
+    <Compile Include="Cmdlet\IndicatorAndStrategyContainer.cs" />
+    <Compile Include="Cmdlet\NewHistoricalData.cs" />
+    <Compile Include="Cmdlet\NewHistoricalDataSet.cs" />
+    <Compile Include="Cmdlet\GetStrategy.cs" />
+    <Compile Include="Cmdlet\NewPortfolio.cs" />
     <Compile Include="Indicator\GenericIndicator.cs" />
     <Compile Include="Indicator\HistoricalPerformanceIndicator.cs" />
+    <Compile Include="Indicator\IIndicator.cs" />
     <Compile Include="Portfolio\IncomeAndTax.cs" />
     <Compile Include="StockData\HistoricalDataSet.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -52,7 +60,7 @@
     <Compile Include="StockData\Stock.cs" />
     <Compile Include="StockData\Ranking.cs" />
     <Compile Include="Strategy\AssetAllocationStrategy.cs" />
-    <Compile Include="Strategy\GenericStrategy.cs" />
+    <Compile Include="Strategy\IStrategy.cs" />
     <Compile Include="Portfolio\Position.cs" />
     <Compile Include="Portfolio\Portfolio.cs" />
   </ItemGroup>
@@ -65,4 +73,8 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  <PropertyGroup>
+    <PostBuildEvent>mkdir "$(SolutionDir)$(SolutionName)"
+copy /y "$(TargetPath)" "$(SolutionDir)$(SolutionName)"</PostBuildEvent>
+  </PropertyGroup>
 </Project>
