@@ -16,12 +16,14 @@ namespace BackTestStock.StockData
             Daily,
             Weekly,
             Yearly
-        };
+        }
 
-        public DateTime StartDate { get; set; }
+        /// <summary>
+        /// Used when data is provided is daily.
+        /// If set, then try to choose only that date of each month.
+        /// </summary>
+        public int StartDay { get; set; }
 
-        public DateTime EndDate { get; set; }
-        
         public List<Stock> Stocks;
         
         public string Ticker { get; set; }
@@ -49,21 +51,126 @@ namespace BackTestStock.StockData
                 }
 
                 // filter according to daily, weekly or monthly
-                ProcessPrices(result.Stocks, DataType);
+                result.ProcessPrices(result.Stocks, DataType);
 
                 result.Stocks.Reverse();
 
-                result.StartDate = result.Stocks.First().Date;
-                result.EndDate = result.Stocks.Last().Date;
             }
 
             return result;
         }
 
         // Get the prices corresponding to the historical data type
-        private static void ProcessPrices(List<Stock> list, HistoricalDataType DataType)
+        private void ProcessPrices(List<Stock> list, HistoricalDataType DataType)
         {
-            // TODO: implement this
+            // for now implement the case when data is provided daily and startdate is provided
+            if (StartDay != 0)
+            {
+                if (DataType != HistoricalDataType.Daily)
+                {
+                    throw new ArgumentException("Historical datatype needs to be daily to use startdate");
+                }
+
+                List<Stock> filteredStocks = new List<Stock>();
+                int index = 0;
+
+                // select the current eligible month
+                Stock currentStock = Stocks[index];
+                Stock previousStock = Stocks[index];
+                int currentMonth = currentStock.Date.Month;
+
+                // ideally this should be the date in the month
+                DateTime targetDateTime = new DateTime(currentStock.Date.Year, currentMonth, StartDay);
+
+                DateTime firstDateOfCurrentMonth = new DateTime(currentStock.Date.Year, currentMonth, 1);
+
+                while (index < Stocks.Count)
+                {                     
+                    while (firstDateOfCurrentMonth.Month == currentMonth)
+                    {
+                        index += 1;
+                        // match!
+                        if (currentStock.Date == targetDateTime)
+                        {
+                            filteredStocks.Add(currentStock);
+                            if (index == Stocks.Count)
+                            {
+                                break;
+                            }
+
+                            // move to next month
+                            currentMonth = (currentMonth + 1) % 12;
+                        }
+                        else if (currentStock.Date < targetDateTime)
+                        {
+                            // if we are at the last stock. just add this
+                            if (index == Stocks.Count)
+                            {
+                                filteredStocks.Add(currentStock);
+                                break;
+                            }
+                        }
+                        else
+                        {
+                            // we just moved past the target date.
+                            // let's just use the previous date if it is in the same month
+                            if (previousStock.Date.Month == currentMonth)
+                            {
+                                filteredStocks.Add(previousStock);
+                            }
+                            else
+                            {
+                                filteredStocks.Add(currentStock);
+                            }
+                            if (index == Stocks.Count)
+                            {
+                                break;
+                            }
+
+                            currentMonth = (currentMonth + 1) % 12;
+                        }
+
+                        // move to the next stock
+                        previousStock = currentStock;
+                        currentStock = Stocks[index];
+                    }
+
+                    if (index == Stocks.Count)
+                    {
+                        // we break out of the loop because no more stock. so just break again
+                        break;
+                    }
+
+                    // otherwise let's move to the next month
+                    firstDateOfCurrentMonth = firstDateOfCurrentMonth.AddMonths(1);
+                    targetDateTime = targetDateTime.AddMonths(1);
+                    // move to the first stock of the next month
+                    while (index < Stocks.Count)
+                    {
+                        if (currentStock.Date.Month == firstDateOfCurrentMonth.Month)
+                        {
+                            break;
+                        }
+
+                        index += 1;
+
+                        if (index == Stocks.Count)
+                        {
+                            break;
+                        }
+
+                        previousStock = currentStock;
+                        currentStock = Stocks[index];
+                    }
+                }
+
+                // reconstruct the list of stocks so we only include stock data in that date of the month
+                // if no data for that date of the month then select the first date just before it.
+                foreach (var stock in Stocks)
+                {
+
+                }
+            }
         }
     }
 }

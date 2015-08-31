@@ -60,6 +60,10 @@ namespace BackTestStock.Cmdlet
             }
         }
 
+        [Parameter(Mandatory=false)]
+        [ValidateNotNull]
+        public int StartDay { get; set; }
+
         private RuntimeDefinedParameterDictionary _runtimeParamsDict;
 
         public object GetDynamicParameters()

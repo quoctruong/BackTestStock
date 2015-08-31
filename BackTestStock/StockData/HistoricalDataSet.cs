@@ -45,12 +45,30 @@ namespace BackTestStock.StockData
             List<Ranking> shortestRankingList = rankingLists.Aggregate((rankingListA, rankingListB) =>
                 rankingListA.Count < rankingListB.Count ? rankingListA : rankingListB);
 
+            DateTime startingDate = shortestRankingList.First().Stock.Date;
+
+            int index = 0;
+
+            // there is a chance if the stocks are filtered, stock a starts with date 05/10/08 but stock b starts with 05/18/08
+            // so we need to eliminate the first month if this is the case.
+            // get all the first data point from each list
+            var firstDataPoints = rankingLists.Select(list => list.First());
+            if (firstDataPoints.Any(dataPoint =>
+                // same month and year
+                dataPoint.Stock.Date.Month == startingDate.Month && dataPoint.Stock.Date.Year == startingDate.Year
+                // but different day!
+                && dataPoint.Stock.Date.Day != startingDate.Day
+                ))
+            {
+                index = 1;
+            }
+
             int numberOfDataPointToRank = shortestRankingList.Count;
 
             Ranking[][] rankingTable = new Ranking[numberOfDataPointToRank][];
 
             // now rank the stock and put the rank in the indicator value
-            for (int index = 0; index < numberOfDataPointToRank; index += 1)
+            for (; index < numberOfDataPointToRank; index += 1)
             {
                 rankingTable[index] = rankingLists
                     // add all the stock for this date to the array
