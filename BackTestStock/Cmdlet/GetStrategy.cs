@@ -9,6 +9,7 @@ using BackTestStock.Strategy;
 
 namespace BackTestStock.Cmdlet
 {
+    // Cmdlet to Get the strategy used
     [Cmdlet(VerbsCommon.Get, "Strategy")]
     public class GetStrategy : PSCmdlet, IDynamicParameters
     {
