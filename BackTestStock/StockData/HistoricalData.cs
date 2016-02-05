@@ -20,12 +20,14 @@ namespace BackTestStock.StockData
 
         /// <summary>
         /// Used when data is provided is daily.
+        /// Does not have to be set
         /// If set, then try to choose only that date of each month.
         /// </summary>
         public int StartDay { get; set; }
 
         public List<Stock> Stocks;
         
+        // Ticker of the stock
         public string Ticker { get; set; }
 
         public string Name { get; set; }
