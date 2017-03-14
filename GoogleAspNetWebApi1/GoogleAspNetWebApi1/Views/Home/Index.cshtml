@@ -1,0 +1,22 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+    @Scripts.Render("~/bundles/jquery")
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.2/angular.min.js"></script>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    @Scripts.Render("~/bundles/chartApp")
+
+</head>
+
+<body>
+    <div class="jumbotron">
+        <div id="chart_div" style="width: 900px; height: 500px;" ng-controller="ChartController"></div>
+        <script type="text/javascript">
+        </script>
+    </div>
+</body>
+</html>
