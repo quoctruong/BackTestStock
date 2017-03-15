@@ -69,6 +69,9 @@ namespace GoogleAspNetWebApi1
             // Web API routes
             config.MapHttpAttributeRoutes();
 
+            var appXmlType = config.Formatters.XmlFormatter.SupportedMediaTypes.FirstOrDefault(t => t.MediaType == "application/xml");
+            config.Formatters.XmlFormatter.SupportedMediaTypes.Remove(appXmlType);
+
             var cors = new EnableCorsAttribute(
                 origins: "http://localhost:59422/",
                 headers: "*",

@@ -4,9 +4,10 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     @Styles.Render("~/Content/css")
-    @Scripts.Render("~/bundles/modernizr")
     @Scripts.Render("~/bundles/jquery")
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.2/angular.min.js"></script>
+    @Scripts.Render("~/bundles/ui-complete")
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     @Scripts.Render("~/bundles/chartApp")
 
@@ -14,7 +15,16 @@
 
 <body>
     <div class="jumbotron">
-        <div id="chart_div" style="width: 900px; height: 500px;" ng-controller="ChartController"></div>
+        <div id="ticker_search" style="width: 500px; height: 100px"; ng-controller="SearchTickerController">
+            <form data-ng-submit="submit()">
+                <input type="text" list="tickersList" data-ng-model="selectedTicker">
+                <input type="submit" value="Submit">
+                <datalist id="tickersList">
+                    <option ng-repeat="(key, data) in tickers" label="{{data}}">{{key}}</option>
+                </datalist>
+            </form>
+        </div>
+        <div id="chart_div" style="width: 900px; height: 500px;"></div>
         <script type="text/javascript">
         </script>
     </div>

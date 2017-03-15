@@ -11,8 +11,11 @@ namespace GoogleAspNetWebApi1
             bundles.Add(new ScriptBundle("~/bundles/jquery").Include(
                         "~/Scripts/jquery-{version}.js"));
 
+            bundles.Add(new ScriptBundle("~/bundles/ui-complete").Include("~/Scripts/ui-bootstrap-tpls-2.5.0.min.js"));
+
             bundles.Add(new ScriptBundle("~/bundles/chartApp")
             .IncludeDirectory("~/Scripts/Controllers", "*.js")
+            .IncludeDirectory("~/Scripts/Services", "*.js")
             .Include("~/Scripts/ChartApp.js"));
 
             // Use the development version of Modernizr to develop with and learn from. Then, when you're
