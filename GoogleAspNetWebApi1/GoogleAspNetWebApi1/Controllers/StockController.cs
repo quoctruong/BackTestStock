@@ -29,6 +29,15 @@ namespace GoogleAspNetWebApi1.Controllers
             return StockTick.TickerDict;
         }
 
+        [Route("stock/{ticker}/SMA/{period}/{interval}")]
+        public List<SmaIndicator> GetSma(string ticker, int period, string interval)
+        {
+            string url = AlphaVantageApi.GetSMAUrl(ticker, period, interval);
+            JObject result = JObject.Parse(client.GetStringAsync(url).Result);
+            JObject analysis = result[$"Technical Analysis: SMA"].Value<JObject>();
+            return SmaIndicator.ParseSmaArray(analysis, 50);
+        }
+
         /*
          * USING YAHOO API
 [Route("stock/{ticker}")]
@@ -94,9 +103,15 @@ public List<StockTick> Get(string ticker)
         {
             if (series == TIME_SERIES.TIME_SERIES_INTRADAY)
             {
-                return $"{alphaVantageUri}/query?function={series}&symbol={symbol}&interval={GetDescription(interval)}&apikey={apiKey}";
+                return $"{alphaVantageUri}/query?function={series}&symbol={symbol}&interval={GetDescription(interval).ToLower()}&apikey={apiKey}";
             }
             return $"{alphaVantageUri}/query?function={series}&symbol={symbol}&apikey={apiKey}";
+        }
+
+        internal static string GetSMAUrl(string symbol, int timePeriod, string interval)
+        {
+            TIME_INTERVALS timeInterval = (TIME_INTERVALS)Enum.Parse(typeof(TIME_INTERVALS), interval, true);
+            return $"{alphaVantageUri}/query?function=SMA&symbol={symbol}&interval={GetDescription(timeInterval).ToLower()}&time_period={timePeriod}&series_type=close&apikey={apiKey}";
         }
 
         internal static string GetDescription(TIME_INTERVALS enumerationValue)

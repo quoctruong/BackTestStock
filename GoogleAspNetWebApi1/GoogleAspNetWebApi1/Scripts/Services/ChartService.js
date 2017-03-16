@@ -8,6 +8,7 @@
 
 var ChartService = function ($http) {
     this.drawChart = function (ticker) {
+        console.log('Here');
         var data = new google.visualization.DataTable();
         data.addColumn('string', 'Date');
         data.addColumn('number', 'Low');
@@ -41,7 +42,8 @@ var ChartService = function ($http) {
             },
             tooltip: { isHtml: true }
         };
-        var chart = new google.visualization.CandlestickChart(document.getElementById('chart_div'));
+        console.log(document.getElementById('base_chart_div'));
+        var chart = new google.visualization.CandlestickChart(document.getElementById('base_chart_div'));
         var link = 'stock/' + ticker;
         $http.get(link).then(function (response) {
             var monthNames = ["January", "February", "March", "April", "May", "June",
@@ -71,7 +73,6 @@ var ChartService = function ($http) {
                     date = fullDate.getDate();
                 }
                 date = date.toString();
-                console.log(date);
                 var open = tick["Open"];
                 var high = tick["High"];
                 var low = tick["Low"];
@@ -79,10 +80,28 @@ var ChartService = function ($http) {
                 var volume = tick["Volume"];
                 data.addRow([date, low, open, close, high, createTooltipHtml(low, open, close, high)]);
             }
-            console.log(json.length);
             chart.draw(data, options);
         }, function (response) {
             console.log(response);
+        });
+        var link = 'stock/' + ticker + '/SMA/200/daily';
+        $http.get(link).then(function (response) {
+            console.log(response);
+            var json = response.data;
+            var data = new google.visualization.DataTable();
+            data.addColumn('string', 'Date');
+            data.addColumn('number', 'SMA');
+
+            for (var i = 0; i < json.length; i++) {
+                var tick = json[i];
+                var date = tick["Date"];
+                var sma = tick["SMA"];
+                data.addRow([date, sma]);
+            }
+            var smaChart = new google.visualization.LineChart(document.getElementById('overlay_chart_div'));
+            console.log('drawing');
+            smaChart.draw(data, {});
+        }, function (response) {
         });
     }
 }

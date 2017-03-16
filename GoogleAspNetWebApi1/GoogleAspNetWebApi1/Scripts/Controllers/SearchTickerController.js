@@ -1,8 +1,7 @@
 ﻿var SearchTickerController = function ($scope, $http, ChartService) {
     var link = 'stock/Tickers';
     $http.get(link).then(function (response) {
-        $scope.tickers = response.data
-        console.log($scope.tickers);
+        $scope.tickers = response.data;
     }, function (response) {
         console.log(response);
     });

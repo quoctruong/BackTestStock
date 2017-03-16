@@ -118,4 +118,31 @@ namespace GoogleAspNetWebApi1.Models
             return result;
         }
     }
+
+    // TODO: move this to separate file.
+    public class SmaIndicator
+    {
+        public DateTime Date;
+        public double Sma;
+
+        internal static List<SmaIndicator> ParseSmaArray(JObject smaArray, int limit = 125)
+        {
+            var result = new List<SmaIndicator>();
+            foreach (JProperty item in smaArray.Properties())
+            {
+                SmaIndicator indicator = new SmaIndicator();
+                indicator.Date = DateTime.Parse(item.Name);
+                var indicatorData = item.Value;
+                indicator.Sma = indicatorData["SMA"].Value<double>();
+                result.Add(indicator);
+                limit -= 1;
+                if (limit == 0)
+                {
+                    break;
+                }
+            }
+            result.Reverse();
+            return result;
+        }
+    }
 }
